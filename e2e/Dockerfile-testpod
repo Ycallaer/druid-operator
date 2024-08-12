@@ -5,3 +5,7 @@ RUN  apk add --update-cache \
 
 ADD e2e/wikipedia-test.sh .
 ADD e2e/druid-ingestion-test.sh .
+
+ADD e2e/kafka-test.sh .
+ADD e2e/druid-kafka-ingestion-test.sh .
+ADD e2e/kafka-test-config.json .

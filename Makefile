@@ -94,9 +94,19 @@ deploy-testjob: ## Run a wikipedia test pod
 	kubectl create job wiki-test --image=${IMG_KIND}:${TEST_IMG_TAG} -- sh /wikipedia-test.sh
 	JOB_ID="wiki-test" bash e2e/monitor-task.sh
 
+.PHONY: deploy-kafka-testjob
+deploy-kafka-testjob: ## Run a wikipedia test pod
+	kubectl create job kafka-test --image=${IMG_KIND}:${TEST_IMG_TAG} -- sh /kafka-test.sh
+	JOB_ID="kafka-test" bash e2e/monitor-task.sh
+
 .PHONY: deploy-testingestionjob
 deploy-testingestionjob: ## wait for the druidIngestion to complete and then verify dataset
 	kubectl create job ingestion-test --image=${IMG_KIND}:${TEST_IMG_TAG}   -- sh /druid-ingestion-test.sh ${TASK_ID}
+	JOB_ID="ingestion-test" bash e2e/monitor-task.sh
+
+.PHONY: deploy-kafka-testingestionjob
+deploy-kafka-testingestionjob: ## wait for the druidIngestion to complete and then verify dataset
+	kubectl create job ingestion-test --image=${IMG_KIND}:${TEST_IMG_TAG}   -- sh /druid-kafka-ingestion-test.sh ${TASK_ID}
 	JOB_ID="ingestion-test" bash e2e/monitor-task.sh
 
 .PHONY: helm-install-druid-operator

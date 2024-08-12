@@ -14,6 +14,7 @@ NAMESPACE=druid
 # # deploy kind
 # make kind
 # build local docker druid operator image
+eval $(minikube docker-env)
 make docker-build-local
 # push to kind registry
 #make docker-push-local
@@ -53,20 +54,25 @@ kubectl apply -f e2e/configs/druid-cr.yaml -n ${NAMESPACE}
 #   kubectl rollout status "$s" -n ${NAMESPACE}  --timeout=5m
 # done
 
-# Running test job with an example dataset
-make deploy-testjob
 
-
-kubectl apply -f e2e/configs/kafka-ingestion-cr.yaml -n ${NAMESPACE}
-taskId=`kubectl get druidingestion -n druid kafka-ingestion --template={{.status.taskId}}`
 
 # Running a test DruidIngestion resource and wait for the task to be submitted
-kubectl apply -f e2e/configs/druid-ingestion-cr.yaml -n ${NAMESPACE}
+# kubectl apply -f e2e/configs/druid-ingestion-cr.yaml -n ${NAMESPACE}
+# sleep 30 # wait for the manager to submit the ingestion task
+
+# Running test job with an example dataset
+# make deploy-testjob
+
+# # get the ingestion task ID and launch the monitoring job
+# taskId=`kubectl get druidingestion -n druid wikipedia-ingestion --template={{.status.taskId}}`
+# make deploy-testingestionjob TASK_ID=$taskId
+
+kubectl apply -f e2e/configs/druid-kafka-ingestion-cr.yaml -n ${NAMESPACE}
 sleep 30 # wait for the manager to submit the ingestion task
 
-# get the ingestion task ID and launch the monitoring job
-taskId=`kubectl get druidingestion -n druid wikipedia-ingestion --template={{.status.taskId}}`
-make deploy-testingestionjob TASK_ID=$taskId
+make deploy-kafka-testjob
+taskId=`kubectl get druidingestion -n druid kafka-ingestion --template={{.status.taskId}}`
+make deploy-kafka-testingestionjob TASK_ID=$taskId
 
 # # Delete old druid
 # kubectl delete -f e2e/configs/druid-cr.yaml -n ${NAMESPACE}
