@@ -29,13 +29,28 @@ spec:
     - "wget -O /tmp/mysql-connector-j-8.0.32.tar.gz https://downloads.mysql.com/archives/get/p/3/file/mysql-connector-j-8.0.32.tar.gz && cd /tmp && tar -xf /tmp/mysql-connector-j-8.0.32.tar.gz && cp /tmp/mysql-connector-j-8.0.32/mysql-connector-j-8.0.32.jar /opt/druid/extensions/mysql-connector/mysql-connector-java.jar"
     volumeMounts:
     - name: mysqlconnector
-      mountPath: "/opt/druid/extensions/mysql-connector"  
+      mountPath: "/opt/druid/extensions/mysql-connector"
+  - containerName: protobuf 
+    runAsInit: true
+    image: apache/druid:25.0.0
+    command:
+    - "sh"
+    - "-c"
+    #- "wget -O /tmp/kafka-protobuf-provider-7.6.0.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/7.6.0/kafka-protobuf-provider-7.6.0.jar && wget -O /tmp/kotlin-stdlib-1.9.10.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.10/kotlin-stdlib-1.9.10.jar && wget -O /tmp/wire-schema-4.9.9.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/4.9.9/wire-schema-4.9.9.jar && cp /tmp/*.jar /opt/druid/extensions/protobuf-extensions2"
+    - "wget -O /tmp/kafka-protobuf-provider-6.0.1.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/6.0.1/kafka-protobuf-provider-6.0.1.jar && wget -O /tmp/otlin-stdlib-1.4.0.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.4.0/kotlin-stdlib-1.4.0.jar && wget -O /tmp/wire-schema-3.2.2.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/3.2.2/wire-schema-3.2.2.jar && cp /tmp/*.jar /opt/druid/extensions/protobuf-extensions2"
+    volumeMounts:
+    - name: protobufextensions
+      mountPath: "/opt/druid/extensions/protobuf-extensions2"  
   volumes:
   - name: mysqlconnector
+    emptyDir: {} 
+  - name: protobufextensions
     emptyDir: {} 
   volumeMounts:
   - name: mysqlconnector
     mountPath: "/opt/druid/extensions/mysql-connector"
+  - name: protobufextensions
+    mountPath: "/opt/druid/extensions/protobuf-extensions2"
   securityContext:
     fsGroup: 0
     runAsUser: 0
@@ -102,7 +117,7 @@ spec:
     #
     # Extensions
     #
-    druid.extensions.loadList=["druid-avro-extensions", "druid-s3-extensions", "druid-hdfs-storage", "druid-kafka-indexing-service", "druid-datasketches", "druid-kubernetes-extensions"]
+    druid.extensions.loadList=["druid-avro-extensions", "druid-s3-extensions", "druid-hdfs-storage", "druid-kafka-indexing-service", "druid-datasketches", "druid-kubernetes-extensions", "druid-protobuf-extensions"]
     #
     # Service discovery
     #

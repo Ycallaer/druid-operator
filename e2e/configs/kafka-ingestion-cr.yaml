@@ -1,0 +1,91 @@
+apiVersion: druid.apache.org/v1alpha1
+kind: DruidIngestion
+metadata:
+  labels:
+    app.kubernetes.io/name: druidingestion
+    app.kubernetes.io/instance: druidingestion-sample
+  name: kafka-ingestion
+spec:
+  suspend: false
+  druidCluster: tiny-cluster
+  ingestion:
+    type: native-batch
+    spec: |-
+      {
+      "type": "kafka",
+      "spec": {
+          "dataSchema": {
+              "dataSource": "etf_dummy_data_complex",
+              "timestampSpec": {
+                  "column": "timestamp",
+                  "format": "auto"
+              },
+              "dimensionsSpec": {
+                  "dimensions": [
+                      "unit",
+                      "http_method",
+                      "http_code",
+                      "page",
+                      "metricType",
+                      "server"
+                  ],
+                  "dimensionExclusions": [
+                      "timestamp",
+                      "value"
+                  ]
+              },
+              "metricsSpec": [
+                  {
+                      "name": "count",
+                      "type": "count"
+                  },
+                  {
+                      "name": "value_sum",
+                      "fieldName": "value",
+                      "type": "doubleSum"
+                  },
+                  {
+                      "name": "value_min",
+                      "fieldName": "value",
+                      "type": "doubleMin"
+                  },
+                  {
+                      "name": "value_max",
+                      "fieldName": "value",
+                      "type": "doubleMax"
+                  }
+              ],
+              "granularitySpec": {
+                  "type": "uniform",
+                  "segmentGranularity": "HOUR",
+                  "queryGranularity": "NONE"
+              }
+          },
+          "tuningConfig": {
+              "type": "kafka",
+              "maxRowsPerSegment": 5000000
+          },
+          "ioConfig": {
+              "topic": "metrics_pb",
+              "consumerProperties": {
+                  "bootstrap.servers": "kafka.confluent.svc.cluster.local:9092"
+              },
+              "inputFormat": {
+                  "type": "protobuf",
+                  "protoBytesDecoder": {
+                      "url": "http://schemaregistry.confluent.svc.cluster.local:8081",
+              "type": "schema_registry",
+                      "capacity": 100,
+                  },
+                  "flattenSpec": {
+                      "useFieldDiscovery": true
+                  },
+                  "binaryAsString": false
+              },
+              "taskCount": 1,
+              "replicas": 1,
+              "taskDuration": "PT1H",
+              "type": "kafka"
+          }
+      }
+      }
