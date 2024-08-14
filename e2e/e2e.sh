@@ -67,12 +67,12 @@ kubectl apply -f e2e/configs/druid-cr.yaml -n ${NAMESPACE}
 # taskId=`kubectl get druidingestion -n druid wikipedia-ingestion --template={{.status.taskId}}`
 # make deploy-testingestionjob TASK_ID=$taskId
 
-kubectl apply -f e2e/configs/druid-kafka-ingestion-cr.yaml -n ${NAMESPACE}
-sleep 30 # wait for the manager to submit the ingestion task
+#kubectl apply -f e2e/configs/druid-kafka-ingestion-cr.yaml -n ${NAMESPACE}
+#sleep 30 # wait for the manager to submit the ingestion task
 
-make deploy-kafka-testjob
-taskId=`kubectl get druidingestion -n druid kafka-ingestion --template={{.status.taskId}}`
-make deploy-kafka-testingestionjob TASK_ID=$taskId
+# make deploy-kafka-testjob
+# taskId=`kubectl get druidingestion -n druid kafka-ingestion --template={{.status.taskId}}`
+# make deploy-kafka-testingestionjob TASK_ID=$taskId
 
 # # Delete old druid
 # kubectl delete -f e2e/configs/druid-cr.yaml -n ${NAMESPACE}

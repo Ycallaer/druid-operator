@@ -3,7 +3,7 @@ kind: "Druid"
 metadata:
   name: tiny-cluster
 spec:
-  image: apache/druid:28.0.1
+  image: apache/druid:30.0.0
   # Optionally specify image for all nodes. Can be specify on nodes also
   # imagePullSecrets:
   # - name: tutu
@@ -22,7 +22,7 @@ spec:
   additionalContainer:
   - containerName: mysqlconnector 
     runAsInit: true
-    image: apache/druid:28.0.1
+    image: apache/druid:30.0.0
     command:
     - "sh"
     - "-c"
@@ -32,13 +32,11 @@ spec:
       mountPath: "/opt/druid/extensions/mysql-connector"
   - containerName: protobuf 
     runAsInit: true
-    image: apache/druid:28.0.1
+    image: apache/druid:30.0.0
     command:
     - "sh"
     - "-c"
-    #- "wget -O /tmp/kafka-protobuf-provider-7.6.0.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/7.6.0/kafka-protobuf-provider-7.6.0.jar && wget -O /tmp/kotlin-stdlib-1.9.10.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.10/kotlin-stdlib-1.9.10.jar && wget -O /tmp/wire-schema-4.9.9.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/4.9.9/wire-schema-4.9.9.jar && cp /tmp/*.jar /opt/druid/extensions/protobuf-extensions"
-    #- "wget -O /tmp/kafka-protobuf-provider-6.0.1.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/6.0.1/kafka-protobuf-provider-6.0.1.jar && wget -O /tmp/otlin-stdlib-1.4.0.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.4.0/kotlin-stdlib-1.4.0.jar && wget -O /tmp/wire-schema-3.2.2.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/3.2.2/wire-schema-3.2.2.jar && cp /tmp/*.jar /opt/druid/extensions/protobuf-extensions"
-    - "wget -O /tmp/druid-protobuf-extensions-28.0.1.jar https://repo1.maven.org/maven2/org/apache/druid/extensions/druid-protobuf-extensions/28.0.1/druid-protobuf-extensions-28.0.1.jar && wget -O /tmp/kotlin-stdlib-1.4.0.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.4.0/kotlin-stdlib-1.4.0.jar && wget -O /tmp/kafka-protobuf-provider-6.2.0.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/6.2.0/kafka-protobuf-provider-6.2.0.jar && wget -O /tmp/kafka-protobuf-types-6.2.0.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-types/6.2.0/kafka-protobuf-types-6.2.0.jar && wget -O /tmp/wire-runtime-3.6.0.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-runtime/3.6.0/wire-runtime-3.6.0.jar && wget -O /tmp/wire-schema-3.6.0.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/3.6.0/wire-schema-3.6.0.jar && wget -O /tmp/proto-google-common-protos-2.36.0.jar https://repo1.maven.org/maven2/com/google/api/grpc/proto-google-common-protos/2.36.0/proto-google-common-protos-2.36.0.jar && cp /tmp/*.jar /opt/druid/extensions/druid-protobuf-extensions"   
+    - "wget -O /tmp/druid-protobuf-extensions-30.0.0.jar https://repo1.maven.org/maven2/org/apache/druid/extensions/druid-protobuf-extensions/30.0.0/druid-protobuf-extensions-30.0.0.jar && wget -O /tmp/kotlin-stdlib-1.4.0.jar https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.4.0/kotlin-stdlib-1.4.0.jar && wget -O /tmp/kafka-protobuf-provider-6.0.1.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-provider/6.0.1/kafka-protobuf-provider-6.0.1.jar && wget -O /tmp/kafka-protobuf-types-6.0.1.jar https://packages.confluent.io/maven/io/confluent/kafka-protobuf-types/6.2.0/kafka-protobuf-types-6.2.0.jar && wget -O /tmp/wire-runtime-3.2.2.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-runtime/3.2.2/wire-runtime-3.2.2.jar && wget -O /tmp/wire-schema-3.2.2.jar https://repo1.maven.org/maven2/com/squareup/wire/wire-schema/3.2.2/wire-schema-3.2.2.jar && wget -O /tmp/proto-google-common-protos-2.36.0.jar https://repo1.maven.org/maven2/com/google/api/grpc/proto-google-common-protos/2.36.0/proto-google-common-protos-2.36.0.jar && cp /tmp/*.jar /opt/druid/extensions/druid-protobuf-extensions"    
     volumeMounts:
     - name: protobufextensions
       mountPath: "/opt/druid/extensions/druid-protobuf-extensions"  
