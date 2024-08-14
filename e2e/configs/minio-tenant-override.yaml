@@ -2,6 +2,7 @@ tenant:
   pools:
   - servers: 1
     volumesPerServer: 1
+    name: "miniopool"
   certificate:
     requestAutoCert: false
   buckets: 

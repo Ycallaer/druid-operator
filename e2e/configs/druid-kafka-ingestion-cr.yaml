@@ -1,0 +1,82 @@
+apiVersion: druid.apache.org/v1alpha1
+kind: DruidIngestion
+metadata:
+  labels:
+    app.kubernetes.io/name: druidingestion
+    app.kubernetes.io/instance: druidingestion-sample
+  name: kafka-ingestion
+spec:
+  suspend: false
+  druidCluster: tiny-cluster
+  ingestion:
+    type: kafka
+    spec: |-
+      {
+        "type": "kafka",
+        "spec": {
+          "ioConfig": {
+            "type": "kafka",
+            "consumerProperties": {
+              "bootstrap.servers": "kafka.confluent.svc.cluster.local:9092"
+            },
+            "topic": "etf_dummy_data",
+            "inputFormat": {
+              "type": "protobuf",
+              "protoBytesDecoder": {
+                "type": "schema_registry",
+                "url": "http://schemaregistry.confluent.svc.cluster.local:8081"
+              }
+            }
+          },
+          "tuningConfig": {
+            "type": "kafka"
+          },
+          "dataSchema": {
+            "dataSource": "etf_dummy_data",
+            "timestampSpec": {
+              "column": "timestamp",
+              "format": "auto"
+            },
+            "dimensionsSpec": {
+              "dimensions": [
+                "unit",
+                "http_method",
+                "http_code",
+                "page",
+                "metricType",
+                "server"
+              ],
+              "dimensionExclusions": [
+                "timestamp",
+                "value"
+              ]
+            },
+            "metricsSpec": [
+              {
+                "name": "count",
+                "type": "count"
+              },
+              {
+                "name": "value_sum",
+                "fieldName": "value",
+                "type": "doubleSum"
+              },
+              {
+                "name": "value_min",
+                "fieldName": "value",
+                "type": "doubleMin"
+              },
+              {
+                "name": "value_max",
+                "fieldName": "value",
+                "type": "doubleMax"
+              }
+            ],
+            "granularitySpec": {
+              "type": "uniform",
+              "segmentGranularity": "HOUR",
+              "queryGranularity": "NONE"
+            }
+          }
+        }
+      }

@@ -4,7 +4,7 @@ TEST_IMG_TAG ?= "test"
 # Image URL to use all building/pushing image targets
 IMG ?= "datainfrahq/druid-operator"
 # Local Image URL to be pushed to kind registery
-IMG_KIND ?= "localhost:5001/druid-operator"
+IMG_KIND ?= "localhost/druid-operator"
 # NAMESPACE for druid operator e2e
 NAMESPACE_DRUID_OPERATOR ?= "druid-operator-system"
 # NAMESPACE for zk operator e2e
@@ -83,7 +83,7 @@ e2e: ## Runs e2e tests
 
 .PHONY: docker-build-local-test
 docker-build-local-test: ## Build docker image with the manager for test on kind.
-	docker build -t ${IMG_KIND}:${TEST_IMG_TAG} -f e2e/Dockerfile-testpod .
+	docker build -t ${IMG_KIND}:${TEST_IMG_TAG} -f e2e/Dockerfile-testpod . --no-cache
 
 .PHONY: docker-push-local-test
 docker-push-local-test: ## Push docker image with the manager to kind registry.
@@ -91,12 +91,22 @@ docker-push-local-test: ## Push docker image with the manager to kind registry.
 
 .PHONY: deploy-testjob
 deploy-testjob: ## Run a wikipedia test pod
-	kubectl create job wiki-test --image=${IMG_KIND}:${TEST_IMG_TAG}  -- sh /wikipedia-test.sh
+	kubectl create job wiki-test --image=${IMG_KIND}:${TEST_IMG_TAG} -- sh /wikipedia-test.sh
 	JOB_ID="wiki-test" bash e2e/monitor-task.sh
+
+.PHONY: deploy-kafka-testjob
+deploy-kafka-testjob: ## Run a wikipedia test pod
+	kubectl create job kafka-test --image=${IMG_KIND}:${TEST_IMG_TAG} -- sh /kafka-test.sh
+	JOB_ID="kafka-test" bash e2e/monitor-task.sh
 
 .PHONY: deploy-testingestionjob
 deploy-testingestionjob: ## wait for the druidIngestion to complete and then verify dataset
-	kubectl create job ingestion-test --image=${IMG_KIND}:${TEST_IMG_TAG}  -- sh /druid-ingestion-test.sh ${TASK_ID}
+	kubectl create job ingestion-test --image=${IMG_KIND}:${TEST_IMG_TAG}   -- sh /druid-ingestion-test.sh ${TASK_ID}
+	JOB_ID="ingestion-test" bash e2e/monitor-task.sh
+
+.PHONY: deploy-kafka-testingestionjob
+deploy-kafka-testingestionjob: ## wait for the druidIngestion to complete and then verify dataset
+	kubectl create job ingestion-test --image=${IMG_KIND}:${TEST_IMG_TAG}   -- sh /druid-kafka-ingestion-test.sh ${TASK_ID}
 	JOB_ID="ingestion-test" bash e2e/monitor-task.sh
 
 .PHONY: helm-install-druid-operator
